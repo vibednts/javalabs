@@ -69,6 +69,17 @@
               <cargo.servlet.port>8080</cargo.servlet.port>
               <cargo.hostname>localhost</cargo.hostname>
             </properties>
+            <datasources>
+              <datasource>
+                <jndiName>jdbc/MyDB</jndiName>
+                <url>
+                  jdbc:mysql://localhost:3306/myapp?serverTimezone=UTC
+                </url>
+                <driverClass>com.mysql.cj.jdbc.Driver</driverClass>
+                <username>root</username>
+                <password>11</password>
+              </datasource>
+            </datasources>
           </configuration>
           <deployables>
             <deployable>
