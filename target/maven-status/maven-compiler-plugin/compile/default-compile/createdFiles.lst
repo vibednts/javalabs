@@ -1,3 +1,12 @@
+com/example/model/Task.class
+com/example/RegisterServlet.class
+com/example/TaskServlet.class
+com/example/dao/DataSourceProvider.class
+com/example/LoginServlet.class
 com/example/UserServlet.class
-com/example/UsersDbServlet.class
+com/example/model/User.class
+com/example/model/Task$Status.class
+com/example/dao/UserDao.class
+com/example/LogoutServlet.class
+com/example/dao/TaskDao.class
 com/example/HelloServlet.class

@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
   Codehaus Cargo, copyright 2004-2011 Vincent Massol, 2012-2023 Ali Tokmen.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +14,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  --><Context>
-<Resource auth="Container" driverClassName="com.mysql.cj.jdbc.Driver" factory="org.apache.tomcat.dbcp.dbcp2.BasicDataSourceFactory" name="jdbc/MyDB" password="11" type="javax.sql.DataSource" url="jdbc:mysql://localhost:3306/myapp?serverTimezone=UTC" username="root"/>
+  -->
+
+<Context>
 </Context>

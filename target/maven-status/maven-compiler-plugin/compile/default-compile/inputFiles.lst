@@ -1,3 +1,11 @@
-/mnt/c/Users/Administrator/myapp/src/main/java/com/example/UsersDbServlet.java
+/mnt/c/Users/Administrator/myapp/src/main/java/com/example/RegisterServlet.java
+/mnt/c/Users/Administrator/myapp/src/main/java/com/example/dao/DataSourceProvider.java
 /mnt/c/Users/Administrator/myapp/src/main/java/com/example/UserServlet.java
+/mnt/c/Users/Administrator/myapp/src/main/java/com/example/LogoutServlet.java
+/mnt/c/Users/Administrator/myapp/src/main/java/com/example/model/User.java
+/mnt/c/Users/Administrator/myapp/src/main/java/com/example/dao/TaskDao.java
+/mnt/c/Users/Administrator/myapp/src/main/java/com/example/model/Task.java
+/mnt/c/Users/Administrator/myapp/src/main/java/com/example/dao/UserDao.java
 /mnt/c/Users/Administrator/myapp/src/main/java/com/example/HelloServlet.java
+/mnt/c/Users/Administrator/myapp/src/main/java/com/example/LoginServlet.java
+/mnt/c/Users/Administrator/myapp/src/main/java/com/example/TaskServlet.java
