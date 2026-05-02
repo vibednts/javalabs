@@ -19,25 +19,33 @@ public class FirebaseConfig {
     public static void init() {
         if (isInitialized) return;
 
-        try (InputStream input = FirebaseConfig.class.getClassLoader().getResourceAsStream("project.properties")) {
+        try {
+            // 1. Читаємо project.properties з ресурсів
+            InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream("project.properties");
             if (input == null) {
-                throw new RuntimeException("Не знайдено project.properties у resources");
+                throw new RuntimeException("Не знайдено project.properties");
             }
             properties.load(input);
 
-            String serviceAccountPath = properties.getProperty("firebase.service.account.path");
+            String serviceAccountFilename = properties.getProperty("firebase.service.account.path");
 
-            try (FileInputStream serviceAccount = new FileInputStream(serviceAccountPath)) {
-                FirebaseOptions options = FirebaseOptions.builder()
-                        .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                        .build();
+            // 2. Читаємо JSON-ключ ТАКОЖ з ресурсів (замість FileInputStream)
+            InputStream serviceAccount = Thread.currentThread().getContextClassLoader().getResourceAsStream(serviceAccountFilename);
 
-                if (FirebaseApp.getApps().isEmpty()) {
-                    FirebaseApp.initializeApp(options);
-                }
-                isInitialized = true;
-                System.out.println("Firebase Admin SDK успішно ініціалізовано.");
+            if (serviceAccount == null) {
+                throw new RuntimeException("Не знайдено файл ключа Firebase у папці resources: " + serviceAccountFilename);
             }
+
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options);
+            }
+            isInitialized = true;
+            System.out.println("Firebase Admin SDK успішно ініціалізовано.");
+
         } catch (Exception e) {
             System.err.println("Помилка ініціалізації Firebase: " + e.getMessage());
             e.printStackTrace();
