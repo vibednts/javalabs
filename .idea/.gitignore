@@ -11,3 +11,4 @@
 src/main/resources/hibernate.cfg.xml
 src/main/resources/project.properties
 src/main/resources/todowebservlet-firebase-adminsdk-fbsvc-92467d9ab6.json
+/target/
