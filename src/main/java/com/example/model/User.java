@@ -1,61 +1,52 @@
 package com.example.model;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 import java.sql.Timestamp;
 
+@Entity
+@Table(name = "users")
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String name;
+
+    @Column(name = "firebase_uid", nullable = false, unique = true, length = 128)
+    private String firebaseUid;
+
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
-    private String password;
+
+    @Column(nullable = false, length = 100)
+    private String name;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
 
-    //constructors
+    // Порожній конструктор обов'язковий для Hibernate
     public User() {}
 
-    public User(String name, String email, String password) {
-        this.name = name;
+    public User(String firebaseUid, String email, String name) {
+        this.firebaseUid = firebaseUid;
         this.email = email;
-        this.password = password;
-    }
-
-    //Get/Set-methods
-    public int getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setName(String name) {
         this.name = name;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    // Getters / Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+    public String getFirebaseUid() { return firebaseUid; }
+    public void setFirebaseUid(String firebaseUid) { this.firebaseUid = firebaseUid; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 }

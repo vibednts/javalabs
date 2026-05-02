@@ -6,6 +6,7 @@ import com.example.model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -15,22 +16,17 @@ public class TaskServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         HttpSession session = req.getSession(false);
 
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-
-        // Перевірка, чи залогінений юзер
+        // Перевірка, чи залогінений юзер. Тепер кидаємо на /user/login
         if (session == null || session.getAttribute("user") == null) {
-            resp.sendRedirect(req.getContextPath() + "/login");
+            resp.sendRedirect(req.getContextPath() + "/user/login");
             return;
         }
 
         User user = (User) session.getAttribute("user");
         String action = req.getParameter("action");
 
-        // Обробка дій (видалення або зміна статусу через GET параметри)
         if (action != null) {
             int taskId = Integer.parseInt(req.getParameter("id"));
             if (action.equals("delete")) {
@@ -42,9 +38,9 @@ public class TaskServlet extends HttpServlet {
             return;
         }
 
-        // Отримання списку тасок
         List<Task> tasks = taskDao.getTasksByUserId(user.getId());
         req.setAttribute("tasks", tasks);
+        // Ім'я ми вже передаємо через фільтр (currentUserName), але можна і так залишити
         req.setAttribute("userName", user.getName());
         req.getRequestDispatcher("/WEB-INF/templates/tasks.ftl").forward(req, resp);
     }
@@ -53,19 +49,18 @@ public class TaskServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
 
-        req.setCharacterEncoding("UTF-8");
-        resp.setCharacterEncoding("UTF-8");
-
         if (session == null || session.getAttribute("user") == null) {
-            resp.sendRedirect(req.getContextPath() + "/login");
+            resp.sendRedirect(req.getContextPath() + "/user/login");
             return;
         }
 
+        req.setCharacterEncoding("UTF-8");
         User user = (User) session.getAttribute("user");
         String title = req.getParameter("title");
         String description = req.getParameter("description");
 
-        Task task = new Task(title, description, Task.Status.NEW, user.getId());
+        // Зверни увагу: тепер ми передаємо об'єкт user, а не просто user.getId()
+        Task task = new Task(title, description, Task.Status.NEW, user);
         taskDao.saveTask(task);
 
         resp.sendRedirect(req.getContextPath() + "/tasks");

@@ -1,80 +1,58 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>Завдання</title>
+<#import "layout.ftl" as layout>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body class="bg-light">
-
-<div class="container mt-5">
-
-    <div class="d-flex justify-content-between">
-        <h2>Привіт, ${userName}!</h2>
-        <a href="logout" class="btn btn-danger">Вийти</a>
-    </div>
-
-    <hr>
-
-    <div class="card p-3 mb-4">
-        <h4>Додати завдання</h4>
-
-        <form action="tasks" method="post">
-
-            <input name="title" class="form-control mb-2" placeholder="Назва" required>
-
-            <input name="description" class="form-control mb-2" placeholder="Опис">
-
-            <button class="btn btn-primary">
-                Додати
-            </button>
-
+<@layout.page title="Мої Завдання">
+    <div class="card p-3 mb-4 shadow-sm">
+        <h4 class="mb-3">Додати нове завдання</h4>
+        <form action="${contextPath}/tasks" method="post" class="row g-2">
+            <div class="col-md-4">
+                <input name="title" class="form-control" placeholder="Назва завдання" required>
+            </div>
+            <div class="col-md-6">
+                <input name="description" class="form-control" placeholder="Детальний опис (необов'язково)">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary w-100">Додати</button>
+            </div>
         </form>
     </div>
 
-    <div class="card p-3">
+    <div class="card p-3 shadow-sm">
+        <h4 class="mb-3">Список завдань</h4>
 
-        <h4>Список завдань</h4>
+        <#if tasks?size == 0>
+            <p class="text-muted text-center my-4">У вас ще немає завдань. Додайте перше!</p>
+        <#else>
+            <ul class="list-group list-group-flush">
+                <#list tasks as task>
+                    <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <strong class="fs-5">${task.title}</strong>
+                            <#if task.description?has_content>
+                                <p class="mb-1 text-muted small">${task.description}</p>
+                            </#if>
 
-        <ul class="list-group">
+                            <#if task.status == 'NEW'>
+                                <span class="badge bg-primary">Нове</span>
+                            <#elseif task.status == 'IN_PROGRESS'>
+                                <span class="badge bg-warning text-dark">В процесі</span>
+                            <#elseif task.status == 'DONE'>
+                                <span class="badge bg-success">Виконано</span>
+                            </#if>
+                        </div>
 
-            <#list tasks as task>
-
-                <li class="list-group-item d-flex justify-content-between">
-
-                    <div>
-                        <strong>${task.title}</strong>
-                        <br>
-                        ${task.description!''}
-                        <br>
-                        <span class="badge bg-secondary">${task.status}</span>
-                    </div>
-
-                    <div>
-
-                        <#if task.status != 'DONE'>
-                            <a href="tasks?action=complete&id=${task.id}" class="btn btn-success btn-sm">
-                                Виконано
+                        <div>
+                            <#if task.status != 'DONE'>
+                                <a href="${contextPath}/tasks?action=complete&id=${task.id}" class="btn btn-sm btn-outline-success me-1">
+                                    ✓ Виконано
+                                </a>
+                            </#if>
+                            <a href="${contextPath}/tasks?action=delete&id=${task.id}" class="btn btn-sm btn-outline-danger">
+                                ✗ Видалити
                             </a>
-                        </#if>
-
-                        <a href="tasks?action=delete&id=${task.id}" class="btn btn-danger btn-sm">
-                            Видалити
-                        </a>
-
-                    </div>
-
-                </li>
-
-            </#list>
-
-        </ul>
-
+                        </div>
+                    </li>
+                </#list>
+            </ul>
+        </#if>
     </div>
-
-</div>
-
-</body>
-</html>
+</@layout.page>

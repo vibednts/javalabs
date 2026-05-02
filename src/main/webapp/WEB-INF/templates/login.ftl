@@ -1,49 +1,77 @@
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>Вхід</title>
+<#import "layout.ftl" as layout>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+<@layout.page title="Вхід">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card p-4 shadow">
+                <h2 class="mb-3 text-center">Вхід</h2>
 
-<div class="container mt-5">
-    <div class="card p-4 shadow">
+                <div id="errorAlert" class="alert alert-danger d-none"></div>
 
-        <h2 class="mb-3">Вхід</h2>
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль</label>
+                        <input type="password" id="password" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" id="loginBtn">Увійти</button>
+                </form>
 
-        <#if error??>
-            <div class="alert alert-danger">
-                ${error}
+                <a href="${contextPath}/user/register" class="mt-3 d-block text-center">Ще немає акаунта? Зареєструватися</a>
             </div>
-        </#if>
-
-        <form action="login" method="post">
-
-            <div class="mb-3">
-                <label class="form-label">Email</label>
-                <input type="email" name="email" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Пароль</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-                Увійти
-            </button>
-
-        </form>
-
-        <a href="register" class="mt-3 d-block">
-            Ще немає акаунта? Зареєструватися
-        </a>
-
+        </div>
     </div>
-</div>
 
-</body>
-</html>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+        const app = initializeApp(window.appConfig.firebaseConfig);
+        const auth = getAuth(app);
+
+        const loginForm = document.getElementById('loginForm');
+        const errorAlert = document.getElementById('errorAlert');
+        const loginBtn = document.getElementById('loginBtn');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Зупиняємо стандартну відправку форми
+
+            loginBtn.disabled = true;
+            errorAlert.classList.add('d-none');
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // 1. Авторизація у Firebase
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const idToken = await userCredential.user.getIdToken();
+
+                // 2. Відправка токена на наш бекенд
+                const response = await fetch(window.appConfig.contextPath + "/auth/session", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ idToken: idToken })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.status === 'success') {
+                    window.location.href = result.redirectUrl; // Йдемо на сторінку тасок
+                } else {
+                    throw new Error(result.message || "Помилка авторизації на сервері");
+                }
+
+            } catch (error) {
+                console.error(error);
+                errorAlert.textContent = "Помилка входу: перевірте email та пароль.";
+                errorAlert.classList.remove('d-none');
+            } finally {
+                loginBtn.disabled = false;
+            }
+        });
+    </script>
+</@layout.page>
