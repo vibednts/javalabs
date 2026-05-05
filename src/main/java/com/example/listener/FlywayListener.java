@@ -44,6 +44,7 @@ public class FlywayListener implements ServletContextListener {
             e.printStackTrace();
             throw new RuntimeException("Не вдалося запустити міграції", e);
         }
+        com.example.util.HibernateUtil.getSessionFactory();
     }
 
     @Override

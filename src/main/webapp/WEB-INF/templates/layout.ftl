@@ -27,7 +27,7 @@
     <#if isAuthenticated?? && isAuthenticated>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
             <div class="container">
-                <a class="navbar-brand" href="${contextPath}/tasks">MyApp</a>
+                <a class="navbar-brand" href="${contextPath}/tasks">ToDoList</a>
                 <div class="d-flex align-items-center text-white">
                     <span class="me-3">${currentUserName!currentUserEmail!''}</span>
                     <!-- Кнопка виходу використовує JS для виходу з Firebase -->
