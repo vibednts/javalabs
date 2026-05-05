@@ -12,6 +12,14 @@ public class Task {
         NEW, IN_PROGRESS, DONE
     }
 
+    public enum Category {
+        STUDY, WORK, PERSONAL
+    }
+
+    public enum Priority {
+        LOW, MEDIUM, HIGH
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -35,14 +43,29 @@ public class Task {
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", length = 20)
+    private Category category;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority", length = 20)
+    private Priority priority;
+
+    @Column(name = "deadline")
+    private Timestamp deadline;
+
+
     // Порожній конструктор обов'язковий для Hibernate
     public Task() {}
 
-    public Task(String title, String description, Status status, User user) {
+    public Task(String title, String description, Status status, User user, Category category, Priority priority, Timestamp deadline) {
         this.title = title;
         this.description = description;
         this.status = status;
         this.user = user;
+        this.category = category;
+        this.priority = priority;
+        this.deadline = deadline;
     }
 
     // Getters / Setters
@@ -63,4 +86,33 @@ public class Task {
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
+
+    public Priority getPriority() { return priority; }
+    public void setPriority(Priority priority) { this.priority = priority; }
+
+    public Timestamp getDeadline() { return deadline; }
+    public void setDeadline(Timestamp deadline) { this.deadline = deadline; }
+
+    public boolean isOverdue() {
+        return deadline != null && deadline.getTime() < System.currentTimeMillis() && status != Status.DONE;
+    }
+
+    public String getTimeLeftStr() {
+        if (deadline == null || status == Status.DONE) return "";
+        long millis = deadline.getTime() - System.currentTimeMillis();
+
+        if (millis < 0) return "Прострочено!";
+
+        long days = millis / (1000 * 60 * 60 * 24);
+        if (days > 0) return "Залишилось: " + days + " дн.";
+
+        long hours = millis / (1000 * 60 * 60);
+        return "Залишилось: " + hours + " год.";
+    }
+
+
+
 }

@@ -56,11 +56,34 @@ public class TaskServlet extends HttpServlet {
 
         req.setCharacterEncoding("UTF-8");
         User user = (User) session.getAttribute("user");
+
         String title = req.getParameter("title");
         String description = req.getParameter("description");
+        String categoryStr = req.getParameter("category");
+        String priorityStr = req.getParameter("priority");
+        String deadlineStr = req.getParameter("deadline");
+
+        Task.Category category = (categoryStr != null && !categoryStr.isEmpty())
+                ? Task.Category.valueOf(categoryStr)
+                : Task.Category.PERSONAL;
+
+        Task.Priority priority = (priorityStr != null && !priorityStr.isEmpty())
+                ? Task.Priority.valueOf(priorityStr)
+                : Task.Priority.MEDIUM;
+
+        java.sql.Timestamp deadline = null;
+        if (deadlineStr != null && !deadlineStr.isEmpty()) {
+
+            String formattedDate = deadlineStr.replace("T", " ");
+            if (formattedDate.length() == 16) {
+                formattedDate += ":00";
+            }
+            deadline = java.sql.Timestamp.valueOf(formattedDate);
+
+        }
 
         // Зверни увагу: тепер ми передаємо об'єкт user, а не просто user.getId()
-        Task task = new Task(title, description, Task.Status.NEW, user);
+        Task task = new Task(title, description, Task.Status.NEW, user, category, priority, deadline);
         taskDao.saveTask(task);
 
         resp.sendRedirect(req.getContextPath() + "/tasks");

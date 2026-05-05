@@ -32,7 +32,13 @@ public class TaskDao {
     public List<Task> getTasksByUserId(int userId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // Використовуємо HQL для роботи з об'єктами
-            Query<Task> query = session.createQuery("FROM Task t WHERE t.user.id = :userId ORDER BY t.createdAt DESC", Task.class);
+            String sql = "FROM Task t WHERE t.user.id = :userId " +
+                    "ORDER BY " +
+                    "CASE t.status WHEN 'NEW' THEN 1 WHEN 'IN_PROGRESS' THEN 2 WHEN 'DONE' THEN 3 ELSE 4 END ASC, " +
+                    "CASE t.priority WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 3 ELSE 4 END ASC, " +
+                    "t.deadline ASC";
+
+            Query<Task> query = session.createQuery(sql, Task.class);
             query.setParameter("userId", userId);
             return query.list();
         }
